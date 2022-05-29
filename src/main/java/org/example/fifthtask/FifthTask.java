@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,7 +58,7 @@ public class FifthTask {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
             Runnable worker = new WorkerThread("" + i);
             executor.execute(worker);
         }
@@ -84,7 +86,7 @@ public class FifthTask {
             try {
                 Thread.sleep(1000);
                 FifthTask fifthTask = new FifthTask();
-                BigDecimal hrnAmount = BigDecimal.valueOf(Math.random()*10000);
+                BigDecimal hrnAmount = BigDecimal.valueOf(Math.random()*1000);
                 String userLeft = fifthTask.getRandomUser().toString();
                 String userRight = fifthTask.getRandomUser().toString();
                 while(userLeft.equals(userRight)) {
@@ -96,7 +98,6 @@ public class FifthTask {
                     currencyRight = fifthTask.getRandomCurrencies().toString();
                 }
                 fifthTask.exchange(userLeft, userRight, currencyLeft, hrnAmount, currencyRight);
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -107,24 +108,23 @@ public class FifthTask {
     public void exchange(String userOne, String userTwo, String user1Currency,
                          BigDecimal user1Amount, String user2Currency)
             throws IllegalArgumentException {
-
         FifthTask fifthTask = new FifthTask();
         User firstUser = fifthTask.readObjectFromFile(filepath + userOne);
         User secondUser = fifthTask.readObjectFromFile(filepath + userTwo);
-
         switch (user1Currency) {
-            case "hrn":
+            case "HRN":
                 BigDecimal userOneHrnAmount = firstUser.getHrnAmount();
-                logger.info("userOneHrnAmount " + userOneHrnAmount);
+                logger.info("User " + firstUser.getName() + " has " + userOneHrnAmount.setScale(2, RoundingMode.HALF_EVEN)
+                        + " " + user1Currency);
                 if (userOneHrnAmount.compareTo(user1Amount) < 0) {
                     throw new IllegalArgumentException("User " + firstUser.getName() +
                             "doesn't have enough Hrn to exchange");
                 }
-                if (user2Currency.equals("hrn")) {
+                if (user2Currency.equals("HRN")) {
                     throw new IllegalArgumentException("User " + secondUser.getName() +
                             "doesn't have correct currency. Should be differ from Hrn");
                 }
-                if (user2Currency.equals("usd")) {
+                if (user2Currency.equals("USD")) {
                     BigDecimal usd = service.exchangeHrnToUsd(user1Amount);
                     if (secondUser.getUsdAmount().compareTo(usd) < 0) {
                         throw new IllegalArgumentException("User " + secondUser.getName() +
@@ -134,7 +134,7 @@ public class FifthTask {
                     firstUser.setUsdAmount(firstUser.getUsdAmount().add(usd));
                     secondUser.setUsdAmount(secondUser.getUsdAmount().subtract(usd));
                     secondUser.setHrnAmount(secondUser.getHrnAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
 
                 } else {
                     BigDecimal euro = service.exchangeHrnToEur(user1Amount);
@@ -146,22 +146,23 @@ public class FifthTask {
                     firstUser.setEuroAmount(firstUser.getEuroAmount().add(euro));
                     secondUser.setEuroAmount(secondUser.getEuroAmount().subtract(euro));
                     secondUser.setHrnAmount(secondUser.getHrnAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
                 }
                 break;
 
-            case "usd":
+            case "USD":
                 BigDecimal userOneUsdAmount = firstUser.getUsdAmount();
-                logger.info("userOneUsdAmount " + userOneUsdAmount);
+                logger.info("User " + firstUser.getName() + " has " + userOneUsdAmount.setScale(2, RoundingMode.HALF_EVEN)
+                        + " " + user1Currency);
                 if (userOneUsdAmount.compareTo(user1Amount) < 0) {
                     throw new IllegalArgumentException("User " + firstUser.getName() +
                             "doesn't have enough Usd to exchange");
                 }
-                if (user2Currency.equals("usd")) {
+                if (user2Currency.equals("USD")) {
                     throw new IllegalArgumentException("User " + secondUser.getName() +
                             "doesn't have correct currency. Should be differ from Usd");
                 }
-                if (user2Currency.equals("hrn")) {
+                if (user2Currency.equals("HRN")) {
                     BigDecimal hrn = service.exchangeUsdToHrn(user1Amount);
                     if (secondUser.getHrnAmount().compareTo(hrn) < 0) {
                         throw new IllegalArgumentException("User " + secondUser.getName() +
@@ -171,7 +172,7 @@ public class FifthTask {
                     firstUser.setUsdAmount(firstUser.getUsdAmount().add(user1Amount));
                     secondUser.setUsdAmount(secondUser.getUsdAmount().subtract(user1Amount));
                     secondUser.setHrnAmount(secondUser.getHrnAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
 
                 } else {
                     BigDecimal euro = service.exchangeHrnToEur(user1Amount);
@@ -183,21 +184,23 @@ public class FifthTask {
                     firstUser.setEuroAmount(firstUser.getEuroAmount().add(euro));
                     secondUser.setEuroAmount(secondUser.getEuroAmount().subtract(euro));
                     secondUser.setUsdAmount(secondUser.getUsdAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
                 }
                 break;
 
-            case "euro":
+            case "EURO":
                 BigDecimal userOneEuroAmount = firstUser.getEuroAmount();
+                logger.info("User " + firstUser.getName() + " has " + userOneEuroAmount.setScale(2, RoundingMode.HALF_EVEN)
+                        + " " + user1Currency);
                 if (userOneEuroAmount.compareTo(user1Amount) < 0) {
                     throw new IllegalArgumentException("User " + firstUser.getName() +
                             "doesn't have enough Euro to exchange");
                 }
-                if (user2Currency.equals("euro")) {
+                if (user2Currency.equals("EURO")) {
                     throw new IllegalArgumentException("User " + secondUser.getName() +
                             "doesn't have correct currency. Should be differ from Euro");
                 }
-                if (user2Currency.equals("hrn")) {
+                if (user2Currency.equals("HRN")) {
                     BigDecimal hrn = service.exchangeUsdToHrn(user1Amount);
                     if (secondUser.getHrnAmount().compareTo(hrn) < 0) {
                         throw new IllegalArgumentException("User " + secondUser.getName() +
@@ -207,19 +210,19 @@ public class FifthTask {
                     firstUser.setUsdAmount(firstUser.getUsdAmount().add(user1Amount));
                     secondUser.setUsdAmount(secondUser.getUsdAmount().subtract(user1Amount));
                     secondUser.setEuroAmount(secondUser.getEuroAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
 
                 } else {
                     BigDecimal euro = service.exchangeHrnToEur(user1Amount);
                     if (secondUser.getEuroAmount().compareTo(euro) < 0) {
                         throw new IllegalArgumentException("User " + secondUser.getName() +
-                                "doesn't have enough Euro to exchange");
+                                "doesn't have enough Usd to exchange");
                     }
                     firstUser.setUsdAmount(firstUser.getHrnAmount().subtract(user1Amount));
                     firstUser.setEuroAmount(firstUser.getEuroAmount().add(euro));
                     secondUser.setEuroAmount(secondUser.getEuroAmount().subtract(euro));
                     secondUser.setUsdAmount(secondUser.getHrnAmount().add(user1Amount));
-                    logger.info("Exchange finished !!!!!!!!");
+                    logger.info("Exchange finished!");
                 }
                 break;
 
