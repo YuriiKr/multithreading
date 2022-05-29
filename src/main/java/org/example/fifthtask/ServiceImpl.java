@@ -1,6 +1,7 @@
 package org.example.fifthtask;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ServiceImpl {
     ExchangeRate exchangeRate = new ExchangeRate();
@@ -14,7 +15,7 @@ public class ServiceImpl {
 
     public BigDecimal exchangeHrnToUsd (BigDecimal hrn) {
         BigDecimal rate = exchangeRate.getRateUsdToHrn();
-        return hrn.divide(rate);
+        return hrn.divide(rate, RoundingMode.HALF_UP);
     }
 
     public BigDecimal exchangeUsdToEuro (BigDecimal usd) {
@@ -24,7 +25,7 @@ public class ServiceImpl {
 
     public BigDecimal exchangeEuroToUsd (BigDecimal eur) {
         BigDecimal rate = exchangeRate.getRateUsdToHrn();
-        return eur.divide(rate);
+        return eur.divide(rate, RoundingMode.HALF_UP);
     }
 
     public BigDecimal exchangeEuroToHrn (BigDecimal eur) {
@@ -34,7 +35,7 @@ public class ServiceImpl {
 
     public BigDecimal exchangeHrnToEur (BigDecimal hrn) {
         BigDecimal rate = exchangeRate.getRateHrnToEuro();
-        return hrn.divide(rate);
+        return hrn.divide(rate, RoundingMode.HALF_UP);
     }
 
 }

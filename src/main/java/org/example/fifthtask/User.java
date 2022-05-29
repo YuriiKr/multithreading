@@ -13,9 +13,9 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private BigDecimal hrnAmount = BigDecimal.valueOf(Math.random()*1000);
-    private BigDecimal usdAmount = BigDecimal.valueOf(Math.random()*1000);
-    private BigDecimal euroAmount = BigDecimal.valueOf(Math.random()*1000);
+    private BigDecimal hrnAmount = BigDecimal.valueOf(Math.random()*10000);
+    private BigDecimal usdAmount = BigDecimal.valueOf(Math.random()*10000);
+    private BigDecimal euroAmount = BigDecimal.valueOf(Math.random()*10000);
 
     public User (String name) {
         this.name = name;
