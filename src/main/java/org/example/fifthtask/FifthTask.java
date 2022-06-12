@@ -19,10 +19,10 @@ public class FifthTask {
         return storedUsers.get(index);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         logger.info(" Fifth task started! ");
         List<User> storedUsers = userGenerator.generateUsers(200);
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(20);
         for (int i = 0; i < 50; i++) {
             Runnable worker = new WorkerThread(storedUsers);
             executor.execute(worker);
@@ -47,7 +47,7 @@ public class FifthTask {
             try {
                 Thread.sleep(1000);
                 FifthTask fifthTask = new FifthTask();
-                BigDecimal exchangeAmount = BigDecimal.valueOf(Math.random()*1000);
+                BigDecimal exchangeAmount = BigDecimal.valueOf(Math.random()*100);
                 boolean userOneSell = RANDOM.nextBoolean();
                 User userLeft = fifthTask.getRandomUser(storedUsers);
                 User userRight = fifthTask.getRandomUser(storedUsers);
