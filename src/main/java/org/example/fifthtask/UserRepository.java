@@ -11,9 +11,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class UserRepository {
-
-    private static final String path = "C:\\Users\\Yurii_Kryvoruchko\\Downloads\\multithreading\\multithreading";
-    //private static final String filepath = "\\users";
+    private static final String path = "src/main/resources";
     private static final Logger logger = LogManager.getLogger(FifthTask.class);
     protected static final ReadWriteLock RW_LOCK = new ReentrantReadWriteLock();
 

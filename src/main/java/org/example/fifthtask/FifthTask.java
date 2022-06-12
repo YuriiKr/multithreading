@@ -21,8 +21,8 @@ public class FifthTask {
 
     public static void main(String[] args) throws InterruptedException {
         logger.info(" Fifth task started! ");
-        List<User> storedUsers = userGenerator.generateUsers(200);
-        ExecutorService executor = Executors.newFixedThreadPool(20);
+        List<User> storedUsers = userGenerator.generateUsers(20);
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         for (int i = 0; i < 50; i++) {
             Runnable worker = new WorkerThread(storedUsers);
             executor.execute(worker);
