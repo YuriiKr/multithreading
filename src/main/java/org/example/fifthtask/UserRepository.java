@@ -17,11 +17,9 @@ public class UserRepository {
 
     public static void writeUserToFile(User user) {
         RW_LOCK.writeLock().lock();
-        try {
-            FileOutputStream fileOut = new FileOutputStream(path+user.getName());
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+        try (FileOutputStream fileOut = new FileOutputStream(path+user.getName());
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
             objectOut.writeObject(user);
-            objectOut.close();
             logger.info("The " + user.getName() + "was successfully written to a file");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -32,9 +30,8 @@ public class UserRepository {
 
     public static User readUserFromFile(User user) {
         RW_LOCK.readLock().lock();
-        try {
-            FileInputStream fis = new FileInputStream(path+user.getName());
-            ObjectInputStream ois = new ObjectInputStream(fis);
+        try (FileInputStream fis = new FileInputStream(path+user.getName());
+             ObjectInputStream ois = new ObjectInputStream(fis);) {
             user = (User) ois.readObject();
         } catch (Exception ex) {
             ex.printStackTrace();
